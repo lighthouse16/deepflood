@@ -1,0 +1,25 @@
+Matched rows: 331
+Predicted mean 2581.703, obs mean 351.451
+MAE 2314.613, RMSE 2576.365
+
+Top feature correlations with abs(error):
+srad: 0.549
+tmax: 0.445
+temp_range: 0.430
+temp_mean: 0.388
+vp: 0.351
+srad_mean_7d: 0.322
+tmin: 0.270
+tmax_mean_7d: 0.227
+dayl: 0.196
+day_cos: -0.193
+srad_mean_14d: 0.190
+tmax_mean_30d: 0.185
+month_cos: -0.182
+tmax_mean_14d: 0.179
+tmin_mean_7d: 0.179
+tmin_mean_14d: 0.175
+prcp: -0.171
+prcp_mean_3d: -0.155
+prcp_sum_3d: -0.155
+tmin_mean_30d: 0.144
