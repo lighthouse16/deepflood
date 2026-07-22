@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepFlood | Hydrological Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-title">DEEPFLOOD</div>
+                <div class="brand-subtitle">HYDROLOGICAL INTELLIGENCE</div>
+            </div>
+            
+            <div class="nav-group">
+                <div class="nav-header">VIEWS</div>
+                <nav class="nav-links">
+                    <a href="#dashboard" class="nav-item active" data-target="view-dashboard">Live Dashboard</a>
+                    <a href="#metrics" class="nav-item" data-target="view-metrics">Architecture & Metrics</a>
+                    <a href="#explorer" class="nav-item" data-target="view-explorer">Historical & Simulator</a>
+                </nav>
+            </div>
+            
+            <div class="sidebar-meta">
+                <div class="meta-block">
+                    <div class="meta-label">STATION</div>
+                    <div class="meta-value">Long Dai Basin, VN</div>
+                </div>
+                <div class="meta-block">
+                    <div class="meta-label">MODEL</div>
+                    <div class="meta-value">CNN-BiLSTM-Attn</div>
+                </div>
+                <div class="meta-block">
+                    <div class="meta-label">LATENCY</div>
+                    <div class="meta-value">Zero-Lag Aligned</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- VIEW 1: LIVE DASHBOARD -->
+            <section id="view-dashboard" class="view-section active">
+                <header class="section-header">
+                    <div class="header-titles">
+                        <h1>Real-time Streamflow Dashboard</h1>
+                        <p>Monitoring Long Dai River hydrology with zero-lag deep learning predictions.</p>
+                    </div>
+                    <div class="system-status">
+                        <span class="status-indicator"></span>
+                        SYSTEM ACTIVE
+                    </div>
+                </header>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-label">PEAK PREDICTED FLOW</div>
+                        <div class="kpi-value" id="kpi-peak-pred">-- m3/s</div>
+                        <div class="kpi-subtext" id="kpi-peak-date">Expected date</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">OBSERVED BENCHMARK</div>
+                        <div class="kpi-value" id="kpi-peak-obs">-- m3/s</div>
+                        <div class="kpi-subtext">True peak during Oct 2024 storm</div>
+                    </div>
+                    <div class="kpi-card" id="kpi-risk-card">
+                        <div class="kpi-label">BASIN RISK STATUS</div>
+                        <div class="kpi-value" id="kpi-risk-level">--</div>
+                        <div class="kpi-subtext" id="kpi-risk-desc">Evaluating thresholds</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">MODEL ACCURACY (MAE)</div>
+                        <div class="kpi-value highlight">205.1 m3/s</div>
+                        <div class="kpi-subtext">Correlation (R) = 0.668</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div class="chart-title">Observed vs. Predicted Tracking</div>
+                        <div class="chart-filters">
+                            <button class="filter-btn active" data-range="all">All Data</button>
+                            <button class="filter-btn" data-range="surge">Oct 2024 Surge</button>
+                            <button class="filter-btn" data-range="dry">2025 Dry Season</button>
+                        </div>
+                    </div>
+                    <div class="chart-canvas-wrapper">
+                        <canvas id="mainChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 2: MODEL & ARCHITECTURE -->
+            <section id="view-metrics" class="view-section">
+                <header class="section-header">
+                    <div class="header-titles">
+                        <h1>Architecture & Quality Benchmarks</h1>
+                        <p>Technical breakdown of how DeepFlood overcomes domain shifts and hydrological time lag.</p>
+                    </div>
+                </header>
+
+                <!-- Scatter Plot & ML Metrics -->
+                <div class="info-card" style="margin-bottom: 32px;">
+                    <div class="chart-header">
+                        <div class="chart-title">Model Reliability (Predicted vs. Observed)</div>
+                    </div>
+                    <div class="chart-canvas-wrapper" style="height: 350px;">
+                        <canvas id="scatterChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="grid-2col">
+                    <div class="info-card">
+                        <h2 class="card-title">Pipeline Structure</h2>
+                        <p class="card-text">DeepFlood utilizes a hybrid spatiotemporal neural network tailored for tropical catchments.</p>
+                        
+                        <div class="steps-list">
+                            <div class="step-item">
+                                <div class="step-number">01</div>
+                                <div class="step-body">
+                                    <div class="step-title">Input Windowing</div>
+                                    <div class="step-desc">Captures 7 days of historical meteorological variables.</div>
+                                </div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">02</div>
+                                <div class="step-body">
+                                    <div class="step-title">1D-CNN Temporal Extraction</div>
+                                    <div class="step-desc">Extracts localized storm burst patterns and rate-of-change indicators.</div>
+                                </div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">03</div>
+                                <div class="step-body">
+                                    <div class="step-title">Bidirectional LSTM</div>
+                                    <div class="step-desc">Processes forward and backward temporal sequences.</div>
+                                </div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number">04</div>
+                                <div class="step-body">
+                                    <div class="step-title">Temporal Attention Layer</div>
+                                    <div class="step-desc">Dynamically weights critical timesteps during extreme flood surges.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h2 class="card-title">Technical Breakthroughs</h2>
+                        <p class="card-text">Addressing standard time-series flaws in watershed hydrology.</p>
+                        
+                        <div class="feature-block">
+                            <div class="feature-title">1. Zero-Lag Meteorological Alignment</div>
+                            <div class="feature-desc">
+                                <strong>Problem:</strong> Standard models delay predictions by 2 days during flash floods due to shifting inputs.<br>
+                                <strong>Solution:</strong> Restructured sequence window slicing to supply observed precipitation on the target day without target streamflow leakage. Yields zero-lag foresight.
+                            </div>
+                        </div>
+
+                        <div class="feature-block">
+                            <div class="feature-title">2. Watershed Volume Transfer</div>
+                            <div class="feature-desc">
+                                <strong>Problem:</strong> Pre-training on massive national datasets causes raw predictions to overshoot local capacities.<br>
+                                <strong>Solution:</strong> Frozen CNN-BiLSTM feature extractors paired with MSE fine-tuning on local Attention/Dense layers scales weights perfectly to the local basin magnitude.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card mt-24">
+                    <h2 class="card-title">Performance Benchmark</h2>
+                    <div class="benchmark-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">MEAN ABSOLUTE ERROR</div>
+                            <div class="stat-comparison">
+                                <span class="stat-old">2706 m3/s</span>
+                                <span class="stat-new">205.1 m3/s</span>
+                            </div>
+                            <div class="stat-note">92.4% Error Reduction</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">CORRELATION (R)</div>
+                            <div class="stat-comparison">
+                                <span class="stat-old">0.184</span>
+                                <span class="stat-new">0.668</span>
+                            </div>
+                            <div class="stat-note">3.6x Stronger Tracking</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">PEAK TIMING DELAY</div>
+                            <div class="stat-comparison">
+                                <span class="stat-old">2 Days Late</span>
+                                <span class="stat-new">0 Days</span>
+                            </div>
+                            <div class="stat-note">Zero-Lag Peak Capture</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 3: HISTORICAL & SIMULATOR -->
+            <section id="view-explorer" class="view-section">
+                <header class="section-header">
+                    <div class="header-titles">
+                        <h1>Historical Data & Simulator</h1>
+                        <p>Inspect daily hydrological benchmarks and simulate extreme storm impacts.</p>
+                    </div>
+                </header>
+
+                <div class="grid-explorer">
+                    <div class="info-card">
+                        <h2 class="card-title">What-If Storm Simulator</h2>
+                        <p class="card-text">Test model response to simulated rainfall intensity increases over the Long Dai catchment.</p>
+                        
+                        <div class="simulator-panel">
+                            <div class="slider-header">
+                                <label for="rain-slider">ADDITIONAL DAILY RAINFALL</label>
+                                <span id="slider-val" class="slider-value">+0 mm</span>
+                            </div>
+                            <input type="range" id="rain-slider" min="0" max="150" step="5" value="0">
+                            
+                            <div class="sim-metrics">
+                                <div class="sim-row">
+                                    <div class="sim-label">Base Peak Forecast</div>
+                                    <div class="sim-val" id="sim-base-peak">-- m3/s</div>
+                                </div>
+                                <div class="sim-row">
+                                    <div class="sim-label">Simulated Adjusted Peak</div>
+                                    <div class="sim-val highlight" id="sim-adj-peak">-- m3/s</div>
+                                </div>
+                                <div class="sim-row">
+                                    <div class="sim-label">Risk Status</div>
+                                    <div class="sim-val" id="sim-risk-badge">Safe</div>
+                                </div>
+                            </div>
+                            <div class="sim-disclaimer">
+                                Empirical elasticity factor: ~9.2 m3/s peak runoff per additional 1mm of rainfall.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card data-table-card">
+                        <div class="table-header">
+                            <h2 class="card-title">Hydrological Log</h2>
+                            <div class="table-filters">
+                                <button class="filter-btn active" data-filter="all">All Records</button>
+                                <button class="filter-btn" data-filter="flood">High Flow</button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table id="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th class="num-col">Rainfall</th>
+                                        <th class="num-col">Observed</th>
+                                        <th class="num-col">Predicted</th>
+                                        <th class="num-col">Abs Error</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="data-table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="js/script.js"></script>
+</body>
+</html>
