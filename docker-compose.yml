@@ -1,0 +1,14 @@
+# MLOps Deployment for DeepFlood
+version: '3.8'
+
+services:
+  frontend:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    container_name: deepflood-dashboard
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
