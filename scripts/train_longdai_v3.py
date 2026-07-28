@@ -77,35 +77,39 @@ def main():
     
     print(f"Data shape: {X.shape}")
     
-    # 1. LOCAL SCALER
+    # 1. TRAIN/VAL TIME-BASED SPLIT (70/30) FIRST
+    split_idx = int(len(X) * 0.7)
+    
+    X_train_raw, y_train_raw = X[:split_idx], y[:split_idx]
+    X_val_raw, y_val_raw = X[split_idx:], y[split_idx:]
+    
+    # 2. LOCAL SCALER (Fit on Train only)
     scaler_X = MinMaxScaler()
     scaler_y = MinMaxScaler()
     
-    X_flat = X.reshape(-1, len(feature_cols))
-    scaler_X.fit(X_flat)
-    X_scaled = scaler_X.transform(X_flat).reshape(X.shape)
+    X_train_flat = X_train_raw.reshape(-1, len(feature_cols))
+    scaler_X.fit(X_train_flat)
+    X_train = scaler_X.transform(X_train_flat).reshape(X_train_raw.shape)
     
-    scaler_y.fit(y.reshape(-1, 1))
-    y_scaled = scaler_y.transform(y.reshape(-1, 1)).flatten()
+    X_val_flat = X_val_raw.reshape(-1, len(feature_cols))
+    X_val = scaler_X.transform(X_val_flat).reshape(X_val_raw.shape)
+    
+    scaler_y.fit(y_train_raw.reshape(-1, 1))
+    y_train = scaler_y.transform(y_train_raw.reshape(-1, 1)).flatten()
+    y_val = scaler_y.transform(y_val_raw.reshape(-1, 1)).flatten()
     
     joblib.dump(scaler_X, SCALER_X_PATH)
     joblib.dump(scaler_y, SCALER_Y_PATH)
-    print("Local Scalers saved.")
+    print("Local Scalers (Fitted on Train only) saved.")
     
-    # 2. SAMPLE WEIGHTS
+    # 3. SAMPLE WEIGHTS
     # Compute weight based on the proportion of the streamflow.
-    # Base weight 1.0, maximum weight ~ 20.0
-    median_flow = np.median(raw_targets)
-    # y = mx + b. We want median -> 1.0, and peak(7990) -> 20.0
-    # Actually, let's just use 1.0 + (raw_targets / median_flow)
-    # e.g. 200 -> 2.0, 8000 -> 41.0
-    sample_weights = 1.0 + 30.0 * (raw_targets / np.max(raw_targets))
+    # We use max of train targets to avoid leaking the val max
+    max_train_flow = np.max(raw_targets[:split_idx])
+    sample_weights = 1.0 + 30.0 * (raw_targets / max_train_flow)
     
-    # 3. TRAIN/VAL TIME-BASED SPLIT (70/30)
-    split_idx = int(len(X_scaled) * 0.7)
-    
-    X_train, y_train, w_train = X_scaled[:split_idx], y_scaled[:split_idx], sample_weights[:split_idx]
-    X_val, y_val, w_val = X_scaled[split_idx:], y_scaled[split_idx:], sample_weights[split_idx:]
+    w_train = sample_weights[:split_idx]
+    w_val = sample_weights[split_idx:]
     
     model = build_model(X_train.shape[1], X_train.shape[2])
     

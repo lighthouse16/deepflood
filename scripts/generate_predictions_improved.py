@@ -53,7 +53,7 @@ def engineer_features(df):
             lambda x: x.shift(1).rolling(window, min_periods=1).std().fillna(0))
     
     # Rate of change features
-    df['streamflow_change'] = df.groupby('gauge_id')['streamflow'].diff()
+    df['streamflow_change'] = df.groupby('gauge_id')['streamflow_lag_1'].diff()
     df['prcp_change'] = df.groupby('gauge_id')['prcp'].diff()
     
     # Interaction features
