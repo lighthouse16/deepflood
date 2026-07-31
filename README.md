@@ -1,10 +1,10 @@
 # DeepFlood — Hyper-Local Flash-Flood Forecasting
 
-> **DeepFlood is a hyper-local flash-flood forecasting system for Vietnam's Long Dai River basin, originally developed with my SEAS Summer School team in August 2025 and later extended independently.**
+> **A hyper-local same-day flood estimation prototype with a reproducible evaluation dashboard.**
 
-I rebuilt the forecasting pipeline around a leakage-free time-series workflow, combining 1D-CNN feature extraction, BiLSTM temporal modeling, and temporal attention. The system uses basin-specific scaling, lagged hydrological features, rolling rainfall windows, and peak-aware sample weighting to address a core challenge in localized flood prediction: general-purpose models often underestimate or misrepresent extreme events.
+DeepFlood was originally developed with my SEAS Summer School team in August 2025 and later extended independently. I rebuilt the forecasting pipeline around a leakage-aware time-series workflow, combining 1D-CNN feature extraction, BiLSTM temporal modeling, and temporal attention. The system uses basin-specific scaling, lagged hydrological features, rolling rainfall windows, and peak-aware sample weighting to address a core challenge in localized flood prediction: general-purpose models often underestimate extreme events.
 
-I also developed a production-style hindcast evaluation dashboard for comparing observed and predicted streamflow, visualizing rainfall, inspecting model error, and exploring rainfall-based what-if scenarios. The current version includes Docker/Nginx delivery and reproducible frontend deployment.
+I also developed a reproducible hindcast evaluation dashboard for comparing observed and predicted streamflow, inspecting model error, and exploring rainfall-based scenarios.
 
 **Live Dashboard:** [deepflood.haidangtrih.me](https://deepflood.haidangtrih.me)
 
@@ -36,27 +36,21 @@ The current model performs **same-day streamflow estimation** using current mete
 
 ### Chronological Holdout (30% — 2025-04-24 to 2025-08-08)
 
-The holdout period was used for early stopping and checkpoint selection, so these results should be treated as **validation performance** rather than an independent test benchmark.
+The holdout period was used for early stopping and checkpoint selection, so these results represent **validation performance**, not an independent test benchmark.
 
-| Metric | Value |
-|---|---:|
-| MAE | **130.77 m³/s** |
-| Observed holdout peak | 2,576.39 m³/s |
-| Prediction at holdout peak | 2,800.68 m³/s |
-| Peak magnitude error | +8.7% |
+| Metric | Model | Persistence |
+|---|---:|---:|
+| MAE | 130.77 m³/s | **128.12 m³/s** |
+| RMSE | **148.14 m³/s** | 314.27 m³/s |
+| NSE | **0.726** | -0.223 |
+| Holdout peak error | **+8.7%** | - |
+| Peak timing error | **0 days** | - |
 
-### Full Hindcast (Training + Validation Period)
+On a 107-row chronological validation holdout, the model slightly trailed persistence on MAE (130.8 vs. 128.1 m³/s), but substantially improved RMSE (148.1 vs. 314.3 m³/s) and NSE (0.726 vs. −0.223). It captured the 2,576.39 m³/s holdout peak on the correct day with an 8.7% magnitude error (predicting 2,800.68 m³/s).
 
-Across the complete fitted hindcast, including the training period:
+### In-Sample Fit Diagnostic
 
-| Metric | Value |
-|---|---:|
-| Overall MAE | 123.28 m³/s |
-| Recorded historic peak | 7,990.27 m³/s |
-| Model reproduction at that peak | 7,175.78 m³/s |
-| Peak magnitude ratio | 89.8% |
-
-> ⚠️ The historic 7,990 m³/s peak falls within the training period. The 89.8% figure is a **fit diagnostic** showing the model learned to reconstruct extreme events — it is not unseen-event performance.
+Across the full hindcast, including the training period, the model reproduced 7,175.8 m³/s of the recorded 7,990.3 m³/s peak. This is an **in-sample fit diagnostic** showing the model's capacity to represent extreme magnitude, not unseen-event performance.
 
 ### Limitations
 - A persistence baseline is reported by `scripts/evaluate_model.py`; broader linear/tree/ablation comparisons remain future work.
