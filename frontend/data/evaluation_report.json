@@ -1,0 +1,23 @@
+{
+  "scope": "chronological validation holdout used for model selection",
+  "prediction_mode": "same-day estimation using day-T weather and streamflow through T-1",
+  "rows": 107,
+  "start": "2025-04-24",
+  "end": "2025-08-08",
+  "model": {
+    "mae_m3s": 130.76504672897195,
+    "rmse_m3s": 148.1448893204747,
+    "nse": 0.725868829089709
+  },
+  "persistence_baseline": {
+    "mae_m3s": 128.12339622641505,
+    "rmse_m3s": 314.26538729683574,
+    "nse": -0.22344606186733085
+  },
+  "observed_peak_m3s": 2576.39,
+  "prediction_at_observed_peak_m3s": 2800.68,
+  "peak_magnitude_error_percent": 8.705591932898349,
+  "observed_peak_date": "2025-06-12",
+  "model_peak_date": "2025-06-12",
+  "peak_timing_error_days": 0
+}

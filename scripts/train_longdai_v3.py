@@ -7,7 +7,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, LSTM, Bidirectional, Conv1D, Dropout, Multiply
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from sklearn.preprocessing import MinMaxScaler
-from generate_predictions_improved import engineer_features
+from pipeline import engineer_features, get_feature_columns, create_sequences
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TRAIN_DATA_PATH = os.path.join(BASE_DIR, 'data', 'test_dataset_longdai_2024_2025_with_streamflow.csv')
@@ -69,11 +69,11 @@ def main():
         df['gauge_id'] = 'longdai'
         
     df = engineer_features(df)
-    feature_cols = [c for c in df.columns if c not in ['date', 'gauge_id', 'streamflow', 'year', 'month', 'day', 'day_of_year']]
+    feature_cols = get_feature_columns(df)
     target_col = 'streamflow'
     
     print("Creating sequences...")
-    X, y, dates, raw_targets = create_sequences_zero_lag(df, feature_cols, target_col, sequence_length=7)
+    X, y, dates, raw_targets = create_sequences(df, feature_cols, target_col)
     
     print(f"Data shape: {X.shape}")
     
@@ -133,3 +133,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

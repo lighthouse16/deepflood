@@ -4,7 +4,7 @@ let mainChartInstance = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     initSPA();
-    await loadComparisonData();
+    await Promise.all([loadComparisonData(), loadEvaluationReport()]);
     setupEventListeners();
 });
 
@@ -97,24 +97,23 @@ function updateDashboardKPIs(data) {
     document.getElementById('kpi-peak-pred').textContent = `${peakPred.predicted.toFixed(1)} m3/s`;
     document.getElementById('kpi-peak-date').textContent = `Peak on ${peakPred.date}`;
     document.getElementById('kpi-peak-obs').textContent = `${peakObs.observed.toFixed(1)} m3/s`;
+}
 
-    const riskLevel = document.getElementById('kpi-risk-level');
-    const riskDesc = document.getElementById('kpi-risk-desc');
-
-    riskLevel.className = 'kpi-value';
-
-    if (peakPred.predicted < 500) {
-        riskLevel.textContent = 'SAFE';
-        riskLevel.classList.add('status-safe');
-        riskDesc.textContent = 'Normal flow';
-    } else if (peakPred.predicted < 1500) {
-        riskLevel.textContent = 'MODERATE';
-        riskLevel.classList.add('status-warn');
-        riskDesc.textContent = 'Monitoring status';
-    } else {
-        riskLevel.textContent = 'CRITICAL';
-        riskLevel.classList.add('status-danger');
-        riskDesc.textContent = 'Flood surge risk';
+async function loadEvaluationReport() {
+    try {
+        const response = await fetch('data/evaluation_report.json?v=' + Date.now(), { cache: 'no-store' });
+        if (!response.ok) throw new Error('Evaluation report not found');
+        const report = await response.json();
+        const modelMae = report.model.mae_m3s.toFixed(2);
+        const baselineMae = report.persistence_baseline.mae_m3s.toFixed(2);
+        document.getElementById('kpi-holdout-mae').textContent = `${modelMae} m3/s`;
+        document.getElementById('kpi-baseline-mae').textContent = `Persistence MAE: ${baselineMae} m3/s`;
+        document.getElementById('metric-model-mae').textContent = `${modelMae} m3/s`;
+        document.getElementById('metric-model-rmse').textContent = `${report.model.rmse_m3s.toFixed(2)} m3/s`;
+        document.getElementById('metric-model-nse').textContent = `NSE ${report.model.nse.toFixed(3)}`;
+        document.getElementById('metric-baseline-mae').textContent = `${baselineMae} m3/s`;
+    } catch (error) {
+        console.error('Evaluation Load Error:', error);
     }
 }
 

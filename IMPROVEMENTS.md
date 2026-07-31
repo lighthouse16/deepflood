@@ -31,8 +31,9 @@
   - **Correlation ($R^2$)**: Reached **0.947**, accurately tracking the 7,990 m³/s super-typhoon flood peak.
   - **MAE**: Compressed to **44.8 m³/s**.
 
-## Phase 5: Production Dashboard & MLOps (`frontend/` & `docker-compose.yml`)
+## Phase 5: Hindcast Dashboard & Delivery (`frontend/` & `docker-compose.yml`)
 - Constructed a Single Page Application (SPA) for hindcast evaluation and model comparison.
 - Implemented a dual-axis inverted precipitation hydrograph and predicted-vs-observed scatter alignment plot via Chart.js.
 - Deployed live via **GitHub Pages** with active **Dynamic Cache-busting** (`Date.now()` injection) to bypass CDN stale cache during live data updates.
 - Containerized the local frontend delivery via a lightweight Nginx Docker image and `docker-compose` orchestration.
+

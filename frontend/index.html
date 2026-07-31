@@ -47,39 +47,38 @@
         <!-- Main Content Area -->
         <main class="main-content">
             
-            <!-- VIEW 1: LIVE DASHBOARD -->
+            <!-- VIEW 1: HINDCAST EVALUATION -->
             <section id="view-dashboard" class="view-section active">
                 <header class="section-header">
                     <div class="header-titles">
-                        <h1>Real-time Streamflow Dashboard</h1>
-                        <p>Monitoring Long Dai River hydrology with zero-lag deep learning predictions.</p>
+                        <h1>Hindcast Evaluation Dashboard</h1>
+                        <p>Same-day streamflow estimates using day-T weather and river observations through T-1.</p>
                     </div>
                     <div class="system-status">
-                        <span class="status-indicator"></span>
-                        SYSTEM ACTIVE
+                        RESEARCH BENCHMARK
                     </div>
                 </header>
 
                 <div class="kpi-grid">
                     <div class="kpi-card">
-                        <div class="kpi-label">PEAK PREDICTED FLOW</div>
+                        <div class="kpi-label">HINDCAST PEAK ESTIMATE</div>
                         <div class="kpi-value" id="kpi-peak-pred">-- m3/s</div>
-                        <div class="kpi-subtext" id="kpi-peak-date">Expected date</div>
+                        <div class="kpi-subtext" id="kpi-peak-date">Peak date</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">OBSERVED BENCHMARK</div>
+                        <div class="kpi-label">OBSERVED HINDCAST PEAK</div>
                         <div class="kpi-value" id="kpi-peak-obs">-- m3/s</div>
-                        <div class="kpi-subtext">True peak during Oct 2024 storm</div>
+                        <div class="kpi-subtext">Includes training and validation periods</div>
                     </div>
                     <div class="kpi-card" id="kpi-risk-card">
-                        <div class="kpi-label">BASIN RISK STATUS</div>
-                        <div class="kpi-value" id="kpi-risk-level">--</div>
-                        <div class="kpi-subtext" id="kpi-risk-desc">Evaluating thresholds</div>
+                        <div class="kpi-label">EVALUATION SCOPE</div>
+                        <div class="kpi-value">HOLDOUT</div>
+                        <div class="kpi-subtext">Used for checkpoint selection</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">MODEL ACCURACY (MAE)</div>
-                        <div class="kpi-value highlight">205.1 m3/s</div>
-                        <div class="kpi-subtext">Correlation (R) = 0.668</div>
+                        <div class="kpi-label">HOLDOUT MAE</div>
+                        <div class="kpi-value highlight" id="kpi-holdout-mae">-- m3/s</div>
+                        <div class="kpi-subtext" id="kpi-baseline-mae">Loading persistence baseline</div>
                     </div>
                 </div>
 
@@ -159,49 +158,40 @@
                         <p class="card-text">Addressing standard time-series flaws in watershed hydrology.</p>
                         
                         <div class="feature-block">
-                            <div class="feature-title">1. Zero-Lag Meteorological Alignment</div>
+                            <div class="feature-title">1. Same-Day Meteorological Alignment</div>
                             <div class="feature-desc">
-                                <strong>Problem:</strong> Standard models delay predictions by 2 days during flash floods due to shifting inputs.<br>
-                                <strong>Solution:</strong> Restructured sequence window slicing to supply observed precipitation on the target day without target streamflow leakage. Yields zero-lag foresight.
+                                <strong>Prediction cutoff:</strong> Uses observed weather on day T and river observations through T-1 to estimate streamflow on day T.<br>
+                                <strong>Scope:</strong> This is hydrological nowcasting, not a demonstrated multi-day early-warning forecast.
                             </div>
                         </div>
 
                         <div class="feature-block">
-                            <div class="feature-title">2. Watershed Volume Transfer</div>
+                            <div class="feature-title">2. Basin-Specific Calibration</div>
                             <div class="feature-desc">
-                                <strong>Problem:</strong> Pre-training on massive national datasets causes raw predictions to overshoot local capacities.<br>
-                                <strong>Solution:</strong> Frozen CNN-BiLSTM feature extractors paired with MSE fine-tuning on local Attention/Dense layers scales weights perfectly to the local basin magnitude.
+                                <strong>Problem:</strong> Broad national scaling can suppress local-basin extremes.<br>
+                                <strong>Solution:</strong> V3.1 trains from scratch with scalers fitted only on the Long Dai training period and strictly lagged streamflow features.
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="info-card mt-24">
-                    <h2 class="card-title">Performance Benchmark</h2>
+                    <h2 class="card-title">Chronological Holdout Benchmark</h2>
                     <div class="benchmark-stats">
                         <div class="stat-item">
-                            <div class="stat-label">MEAN ABSOLUTE ERROR</div>
-                            <div class="stat-comparison">
-                                <span class="stat-old">2706 m3/s</span>
-                                <span class="stat-new">205.1 m3/s</span>
-                            </div>
-                            <div class="stat-note">92.4% Error Reduction</div>
+                            <div class="stat-label">MODEL MAE</div>
+                            <div class="stat-comparison"><span class="stat-new" id="metric-model-mae">--</span></div>
+                            <div class="stat-note">30% chronological holdout</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-label">CORRELATION (R)</div>
-                            <div class="stat-comparison">
-                                <span class="stat-old">0.184</span>
-                                <span class="stat-new">0.668</span>
-                            </div>
-                            <div class="stat-note">3.6x Stronger Tracking</div>
+                            <div class="stat-label">MODEL RMSE</div>
+                            <div class="stat-comparison"><span class="stat-new" id="metric-model-rmse">--</span></div>
+                            <div class="stat-note" id="metric-model-nse">NSE --</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-label">PEAK TIMING DELAY</div>
-                            <div class="stat-comparison">
-                                <span class="stat-old">2 Days Late</span>
-                                <span class="stat-new">0 Days</span>
-                            </div>
-                            <div class="stat-note">Zero-Lag Peak Capture</div>
+                            <div class="stat-label">PERSISTENCE BASELINE MAE</div>
+                            <div class="stat-comparison"><span class="stat-new" id="metric-baseline-mae">--</span></div>
+                            <div class="stat-note">Q(T) = Q(T-1)</div>
                         </div>
                     </div>
                 </div>
@@ -243,7 +233,7 @@
                                 </div>
                             </div>
                             <div class="sim-disclaimer">
-                                Empirical elasticity factor: ~9.2 m3/s peak runoff per additional 1mm of rainfall.
+                                Exploratory frontend-only sensitivity illustration. It does not run the trained model and must not be interpreted as a flood warning.
                             </div>
                         </div>
                     </div>

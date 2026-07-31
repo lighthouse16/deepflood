@@ -21,15 +21,14 @@ def main():
     if 'gauge_id' not in df_test.columns:
         df_test['gauge_id'] = 'longdai'
         
-    from generate_predictions_improved import engineer_features
+    from pipeline import engineer_features, get_feature_columns, create_sequences
     df_test = engineer_features(df_test)
     
-    feature_cols = [c for c in df_test.columns if c not in ['date', 'gauge_id', 'streamflow', 'year', 'month', 'day', 'day_of_year']]
+    feature_cols = get_feature_columns(df_test)
     target_col = 'streamflow'
     n_features = len(feature_cols)
     
-    from train_longdai_v3 import create_sequences_zero_lag
-    X_test, _, dates, _ = create_sequences_zero_lag(df_test, feature_cols, target_col, sequence_length=7)
+    X_test, _, dates, _ = create_sequences(df_test, feature_cols, target_col)
     
     if len(X_test) == 0:
         print("No sequences created from test data.")
@@ -68,3 +67,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+

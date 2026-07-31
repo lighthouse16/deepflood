@@ -59,17 +59,19 @@ Across the complete fitted hindcast, including the training period:
 > ⚠️ The historic 7,990 m³/s peak falls within the training period. The 89.8% figure is a **fit diagnostic** showing the model learned to reconstruct extreme events — it is not unseen-event performance.
 
 ### Limitations
-- No persistence or linear baseline comparison yet — `MAE 130.77` has not been proven to exceed simpler approaches.
+- A persistence baseline is reported by `scripts/evaluate_model.py`; broader linear/tree/ablation comparisons remain future work.
 - The holdout is not a fully independent test set (used for model selection via early stopping).
 - Same-day estimation requires weather data for the prediction day; operational multi-day lead time has not been demonstrated.
 
 ## 📂 Key Source Code
 1. `scripts/train_longdai_v3.py`: Training pipeline — BiLSTM+Attention architecture, time-based split, train-only scaling.
-2. `scripts/generate_predictions_improved.py`: Feature engineering with strictly lagged target-derived features.
-3. `scripts/generate_predictions_v3.py`: Production inference script.
+2. `scripts/pipeline.py`: Shared feature and sequence contract with strictly lagged target-derived features.
+3. `scripts/generate_predictions_v3.py`: Reproducible V3.1 inference loading the saved model and scalers.
+4. `scripts/evaluate_model.py`: Chronological holdout evaluation and persistence baseline.
 
 ## 📜 Experiment History
 See [`IMPROVEMENTS.md`](IMPROVEMENTS.md) for historical experiment logs from earlier development phases (transfer learning, ensemble Random Forest, etc.). Those metrics belong to different model versions and are **not** the current deployed pipeline.
 
 ## 🚀 Tech Stack
 `Python` · `TensorFlow` · `Keras` · `BiLSTM` · `Temporal Attention` · `Conv1D` · `Time-Series Forecasting` · `Pandas` · `Scikit-learn` · `Chart.js` · `Docker` · `Nginx`
+
