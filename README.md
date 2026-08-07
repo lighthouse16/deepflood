@@ -2,7 +2,7 @@
 
 Basin specific time series modeling with leakage aware validation and peak sensitive training.
 
-DeepFlood was originally developed with my SEAS Summer School team in August 2025 and later extended independently. I rebuilt the forecasting pipeline around a leakage-aware time-series workflow, combining 1D-CNN feature extraction, BiLSTM temporal modeling, and temporal attention. The system uses basin-specific scaling, lagged hydrological features, rolling rainfall windows, and peak-aware sample weighting to address a core challenge in localized flood prediction: general-purpose models often underestimate extreme events.
+DeepFlood was originally developed with my SEAS Summer School team in August 2025 and later extended independently. I rebuilt the modeling and evaluation pipeline around a leakage aware time series workflow, combining 1D-CNN feature extraction, BiLSTM temporal modeling, and temporal attention. The system uses basin-specific scaling, lagged hydrological features, rolling rainfall windows, and peak-aware sample weighting to address a core challenge in modeling local streamflow extremes: general purpose models often underestimate extreme events.
 
 I also developed a reproducible hindcast evaluation dashboard for comparing observed and predicted streamflow, inspecting model error, and exploring rainfall-based scenarios.
 
@@ -18,7 +18,7 @@ After the SEAS Summer School, I independently revisited the original system and 
 - Reworked time-based validation (70/30 chronological split) to prevent scaler and feature data leakage.
 - Added lagged streamflow features and multi-scale rainfall windows where all target-derived features use strictly past observations.
 - Developed the CNN, BiLSTM, and Temporal Attention architecture from scratch.
-- Added peak-aware sample weighting (up to 30x multiplier) for extreme flood events.
+- Added magnitude based sample weighting for high flow events.
 - Built the observed-vs-predicted hindcast evaluation dashboard.
 - Containerized local delivery with Nginx and Docker Compose.
 - Prepared frontend data and inference outputs for public deployment.
@@ -27,8 +27,8 @@ After the SEAS Summer School, I independently revisited the original system and 
 
 Generalized hydrologic models trained on multi-basin datasets can smooth out local extreme flood events (e.g., 7,990 m³/s) as minor noise compared to larger river systems.
 
-This project uses a hyper-local modeling strategy:
-- **Strict Local Scaler**: `MinMaxScaler` is fitted exclusively on the 70% training split. The chronological split is applied before scaler fitting to prevent future-data leakage.
+This project uses a basin specific modeling strategy:
+- **Train Only Scaling**: `MinMaxScaler` is fitted exclusively on the 70% training split. The chronological split is applied before scaler fitting to prevent future-data leakage.
 - **Dynamic Sample Weighting**: Scales training loss for high-magnitude flow days to preserve sensitivity to rare extreme events.
 
 ## Evaluation
@@ -68,4 +68,4 @@ Across the full hindcast, including the training period, the model reproduced 7,
 See [`IMPROVEMENTS.md`](IMPROVEMENTS.md) for historical experiment logs from earlier development phases (transfer learning, ensemble Random Forest, etc.). Those metrics belong to different model versions and are not the current deployed pipeline.
 
 ## Tech Stack
-`Python` · `TensorFlow` · `Keras` · `BiLSTM` · `Temporal Attention` · `Conv1D` · `Time-Series Forecasting` · `Pandas` · `Scikit-learn` · `Chart.js` · `Docker` · `Nginx`
+`Python` · `TensorFlow` · `Keras` · `BiLSTM` · `Temporal Attention` · `Conv1D` · `Time Series Modeling` · `Pandas` · `Scikit-learn` · `Chart.js` · `Docker` · `Nginx`
