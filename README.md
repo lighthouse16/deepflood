@@ -58,7 +58,7 @@ Across the full hindcast, including the training period, the model reproduced 7,
 - A persistence baseline is reported by `scripts/evaluate_model.py`; broader comparisons against simpler ML models or alternative architectures remain future work.
 - The validation period is not an independent test set because it was used for model selection through early stopping.
 - Same-day estimation requires weather data for the prediction day; operational multi-day lead time has not been demonstrated.
-- The dataset source and gauge authority are currently undocumented.
+- Dataset provenance is not yet documented in this repository.
 
 ## Key Source Code
 1. `scripts/train_longdai_v3.py`: Training pipeline with the Conv1D + BiLSTM + Temporal Attention architecture, chronological splitting, and train-only scaling.
