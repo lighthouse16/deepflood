@@ -1,4 +1,4 @@
-"""Evaluate V3.1 on its chronological holdout and a persistence baseline."""
+"""Evaluate V3.1 on its chronological validation period and a persistence baseline."""
 import json
 from pathlib import Path
 
@@ -31,7 +31,7 @@ def main():
     peak_row = holdout.loc[holdout["observed_streamflow"].idxmax()]
     model_peak_date = holdout.loc[holdout["predicted_streamflow"].idxmax(), "date"]
     report = {
-        "scope": "chronological validation holdout used for model selection",
+        "scope": "chronological validation period used for model selection",
         "prediction_mode": "same-day estimation using day-T weather and streamflow through T-1",
         "rows": len(holdout), "start": holdout.iloc[0]["date"].date().isoformat(),
         "end": holdout.iloc[-1]["date"].date().isoformat(), "model": model,
