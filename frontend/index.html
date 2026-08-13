@@ -24,7 +24,7 @@
                 <nav class="nav-links">
                     <a href="#dashboard" class="nav-item active" data-target="view-dashboard">Hindcast Evaluation</a>
                     <a href="#metrics" class="nav-item" data-target="view-metrics">Architecture &amp; Benchmarks</a>
-                    <a href="#explorer" class="nav-item" data-target="view-explorer">Data Explorer &amp; Sensitivity</a>
+                    <a href="#explorer" class="nav-item" data-target="view-explorer">Data Explorer</a>
                 </nav>
             </div>
             
@@ -109,7 +109,8 @@
                 <!-- Scatter Plot & ML Metrics -->
                 <div class="info-card" style="margin-bottom: 32px;">
                     <div class="chart-header">
-                        <div class="chart-title">Model Reliability (Predicted vs. Observed)</div>
+                        <div class="chart-title">Predicted vs. Observed Streamflow</div>
+                        <div class="chart-subtitle" style="font-size: 13px; color: #6b7280; margin-top: 4px;">Full hindcast unless a narrower period is selected.</div>
                     </div>
                     <div class="chart-canvas-wrapper" style="height: 350px;">
                         <canvas id="scatterChart"></canvas>
@@ -119,14 +120,14 @@
                 <div class="grid-2col">
                     <div class="info-card">
                         <h2 class="card-title">Pipeline Structure</h2>
-                        <p class="card-text">DeepFlood utilizes a hybrid spatiotemporal neural network tailored for tropical catchments.</p>
+                        <p class="card-text">DeepFlood utilizes a hybrid temporal neural network tailored for tropical catchments.</p>
                         
                         <div class="steps-list">
                             <div class="step-item">
                                 <div class="step-number">01</div>
                                 <div class="step-body">
                                     <div class="step-title">Input Windowing</div>
-                                    <div class="step-desc">Captures 7 days of historical meteorological variables.</div>
+                                    <div class="step-desc">Uses a seven day observed meteorological window ending on day t.</div>
                                 </div>
                             </div>
                             <div class="step-item">
@@ -140,14 +141,14 @@
                                 <div class="step-number">03</div>
                                 <div class="step-body">
                                     <div class="step-title">Bidirectional LSTM</div>
-                                    <div class="step-desc">Processes forward and backward temporal sequences.</div>
+                                    <div class="step-desc">Processes both directions within the already observed seven day input window.</div>
                                 </div>
                             </div>
                             <div class="step-item">
                                 <div class="step-number">04</div>
                                 <div class="step-body">
                                     <div class="step-title">Temporal Attention Layer</div>
-                                    <div class="step-desc">Dynamically weights critical timesteps during extreme flood surges.</div>
+                                    <div class="step-desc">Learns timestep weights before temporal aggregation.</div>
                                 </div>
                             </div>
                         </div>
@@ -168,7 +169,7 @@
                         <div class="feature-block">
                             <div class="feature-title">2. Basin-Specific Calibration</div>
                             <div class="feature-desc">
-                                <strong>Problem:</strong> Broad national scaling can suppress local-basin extremes.<br>
+                                <strong>Problem:</strong> Earlier project experiments suggested that broad multi basin scaling could underrepresent Long Đại extremes.<br>
                                 <strong>Solution:</strong> V3.1 trains from scratch with scalers fitted only on the Long Dai training period and strictly lagged streamflow features.
                             </div>
                         </div>
@@ -201,42 +202,13 @@
             <section id="view-explorer" class="view-section">
                 <header class="section-header">
                     <div class="header-titles">
-                        <h1>Data Explorer &amp; Sensitivity</h1>
-                        <p>Inspect daily evaluation records and explore an illustrative rainfall sensitivity scenario.</p>
+                        <h1>Data Explorer</h1>
+                        <p>Inspect daily evaluation records.</p>
                     </div>
                 </header>
 
                 <div class="grid-explorer">
-                    <div class="info-card">
-                        <h2 class="card-title">Rainfall Sensitivity Illustration</h2>
-                        <p class="card-text">Explore an illustrative sensitivity scenario using the dashboard's precomputed evaluation context. This interface does not run the trained model.</p>
-                        
-                        <div class="simulator-panel">
-                            <div class="slider-header">
-                                <label for="rain-slider">ADDITIONAL DAILY RAINFALL</label>
-                                <span id="slider-val" class="slider-value">+0 mm</span>
-                            </div>
-                            <input type="range" id="rain-slider" min="0" max="150" step="5" value="0">
-                            
-                            <div class="sim-metrics">
-                                <div class="sim-row">
-                                    <div class="sim-label">Reference Peak</div>
-                                    <div class="sim-val" id="sim-base-peak">-- m3/s</div>
-                                </div>
-                                <div class="sim-row">
-                                    <div class="sim-label">Illustrative Adjusted Peak</div>
-                                    <div class="sim-val highlight" id="sim-adj-peak">-- m3/s</div>
-                                </div>
-                                <div class="sim-row">
-                                    <div class="sim-label">Risk Status</div>
-                                    <div class="sim-val" id="sim-risk-badge">Safe</div>
-                                </div>
-                            </div>
-                            <div class="sim-disclaimer">
-                                Exploratory frontend-only sensitivity illustration. It does not run the trained model and must not be interpreted as a flood warning.
-                            </div>
-                        </div>
-                    </div>
+
 
                     <div class="info-card data-table-card">
                         <div class="table-header">

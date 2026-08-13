@@ -1,4 +1,4 @@
-// DeepFlood Hydrological Intelligence Logic
+// DeepFlood Hindcast Evaluation Logic
 let globalData = [];
 let mainChartInstance = null;
 
@@ -48,7 +48,6 @@ async function loadComparisonData() {
             updateDashboardKPIs(globalData);
             renderMainChart(globalData);
             populateDataTable(globalData);
-            initWhatIfSimulator(globalData);
         }
     } catch (error) {
         console.error('Data Load Error:', error);
@@ -325,42 +324,6 @@ function populateDataTable(dataSubset) {
     });
 }
 
-// 6. Simulator
-function initWhatIfSimulator(data) {
-    let basePeak = 0;
-    data.forEach(d => { if (d.predicted > basePeak) basePeak = d.predicted; });
-
-    const slider = document.getElementById('rain-slider');
-    const sliderVal = document.getElementById('slider-val');
-    const basePeakEl = document.getElementById('sim-base-peak');
-    const adjPeakEl = document.getElementById('sim-adj-peak');
-    const riskBadge = document.getElementById('sim-risk-badge');
-
-    basePeakEl.textContent = `${basePeak.toFixed(1)}`;
-    
-    function updateSim() {
-        const extraRain = parseFloat(slider.value) || 0;
-        sliderVal.textContent = `+${extraRain} mm`;
-
-        const adjustedPeak = basePeak + (extraRain * 9.2);
-        adjPeakEl.textContent = `${adjustedPeak.toFixed(1)}`;
-
-        riskBadge.className = 'sim-val';
-        if (adjustedPeak < 600) {
-            riskBadge.textContent = 'SAFE';
-            riskBadge.classList.add('status-safe');
-        } else if (adjustedPeak < 1500) {
-            riskBadge.textContent = 'MODERATE';
-            riskBadge.classList.add('status-warn');
-        } else {
-            riskBadge.textContent = 'CRITICAL';
-            riskBadge.classList.add('status-danger');
-        }
-    }
-
-    slider.addEventListener('input', updateSim);
-    updateSim();
-}
 
 // 7. Event Listeners
 function setupEventListeners() {

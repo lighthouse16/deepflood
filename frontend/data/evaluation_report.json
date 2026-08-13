@@ -1,1 +1,23 @@
-ewogICJzY29wZSI6ICJjaHJvbm9sb2dpY2FsIHZhbGlkYXRpb24gcGVyaW9kIHVzZWQgZm9yIG1vZGVsIHNlbGVjdGlvbiIsCiAgInByZWRpY3Rpb25fbW9kZSI6ICJzYW1lLWRheSBlc3RpbWF0aW9uIHVzaW5nIGRheS1UIHdlYXRoZXIgYW5kIHN0cmVhbWZsb3cgdGhyb3VnaCBULTEiLAogICJyb3dzIjogMTA3LAogICJzdGFydCI6ICIyMDI1LTA0LTI0IiwKICAiZW5kIjogIjIwMjUtMDgtMDgiLAogICJtb2RlbCI6IHsKICAgICJtYWVfbTNzIjogMTMwLjc2NTA0NjcyODk3MTk1LAogICAgInJtc2VfbTNzIjogMTQ4LjE0NDg4OTMyMDQ3NDcsCiAgICAibnNlIjogMC43MjU4Njg4MjkwODk3MDkKICB9LAogICJwZXJzaXN0ZW5jZV9iYXNlbGluZSI6IHsKICAgICJtYWVfbTNzIjogMTI4LjEyMzM5NjIyNjQxNTA1LAogICAgInJtc2VfbTNzIjogMzE0LjI2NTM4NzI5NjgzNTc0LAogICAgIm5zZSI6IC0wLjIyMzQ0NjA2MTg2NzMzMDg1CiAgfSwKICAib2JzZXJ2ZWRfcGVha19tM3MiOiAyNTc2LjM5LAogICJwcmVkaWN0aW9uX2F0X29ic2VydmVkX3BlYWtfbTNzIjogMjgwMC42OCwKICAicGVha19tYWduaXR1ZGVfZXJyb3JfcGVyY2VudCI6IDguNzA1NTkxOTMyODk4MzQ5LAogICJvYnNlcnZlZF9wZWFrX2RhdGUiOiAiMjAyNS0wNi0xMiIsCiAgIm1vZGVsX3BlYWtfZGF0ZSI6ICIyMDI1LTA2LTEyIiwKICAicGVha190aW1pbmdfZXJyb3JfZGF5cyI6IDAKfQo=
+{
+  "scope": "chronological validation period used for model selection",
+  "prediction_mode": "same-day estimation using day-T weather and streamflow through T-1",
+  "rows": 107,
+  "start": "2025-04-24",
+  "end": "2025-08-08",
+  "model": {
+    "mae_m3s": 130.76504672897195,
+    "rmse_m3s": 148.1448893204747,
+    "nse": 0.725868829089709
+  },
+  "persistence_baseline": {
+    "mae_m3s": 126.92785046728967,
+    "rmse_m3s": 312.7934107750658,
+    "nse": -0.2220817677578415
+  },
+  "observed_peak_m3s": 2576.39,
+  "prediction_at_observed_peak_m3s": 2800.68,
+  "peak_magnitude_error_percent": 8.705591932898349,
+  "observed_peak_date": "2025-06-12",
+  "model_peak_date": "2025-06-12",
+  "peak_timing_error_days": 0
+}

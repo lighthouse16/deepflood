@@ -21,10 +21,10 @@ def main():
     root = Path(__file__).resolve().parents[1]
     data = pd.read_csv(root / "frontend/data/model_comparison_data.csv")
     data["date"] = pd.to_datetime(data["date"])
+    data["persistence_prediction"] = data["observed_streamflow"].shift(1)
     split = int(len(data) * 0.7)
     holdout = data.iloc[split:].copy()
-    holdout["persistence_prediction"] = holdout["observed_streamflow"].shift(1)
-    comparable = holdout.dropna(subset=["persistence_prediction"])
+    comparable = holdout.copy()
 
     model = metrics(holdout["observed_streamflow"], holdout["predicted_streamflow"])
     persistence = metrics(comparable["observed_streamflow"], comparable["persistence_prediction"])
