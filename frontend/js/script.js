@@ -1,10 +1,22 @@
 // DeepFlood Hindcast Evaluation Logic
 let globalData = [];
+let globalReport = null;
 let mainChartInstance = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     initSPA();
     await Promise.all([loadComparisonData(), loadEvaluationReport()]);
+    
+    if (globalData.length > 0) {
+        updateDashboardKPIs(globalData);
+        let defaultChartData = globalData;
+        if (globalReport && globalReport.start && globalReport.end) {
+            defaultChartData = globalData.filter(d => d.date >= globalReport.start && d.date <= globalReport.end);
+        }
+        renderMainChart(defaultChartData);
+        populateDataTable(defaultChartData);
+    }
+    
     setupEventListeners();
 });
 
@@ -44,11 +56,6 @@ async function loadComparisonData() {
         const csvText = await response.text();
         
         globalData = parseCSV(csvText);
-        if (globalData.length > 0) {
-            updateDashboardKPIs(globalData);
-            renderMainChart(globalData);
-            populateDataTable(globalData);
-        }
     } catch (error) {
         console.error('Data Load Error:', error);
     }
@@ -103,6 +110,7 @@ async function loadEvaluationReport() {
         const response = await fetch('data/evaluation_report.json?v=' + Date.now(), { cache: 'no-store' });
         if (!response.ok) throw new Error('Evaluation report not found');
         const report = await response.json();
+        globalReport = report;
         const modelMae = report.model.mae_m3s.toFixed(2);
         const baselineMae = report.persistence_baseline.mae_m3s.toFixed(2);
         document.getElementById('kpi-holdout-mae').textContent = `${modelMae} m3/s`;
@@ -336,10 +344,10 @@ function setupEventListeners() {
             const range = btn.getAttribute('data-range');
             let filtered = globalData;
 
-            if (range === 'surge') {
+            if (range === 'holdout' && globalReport) {
+                filtered = globalData.filter(d => d.date >= globalReport.start && d.date <= globalReport.end);
+            } else if (range === 'surge') {
                 filtered = globalData.filter(d => d.date >= '2024-10-15' && d.date <= '2024-11-15');
-            } else if (range === 'dry') {
-                filtered = globalData.filter(d => d.date >= '2025-03-01' && d.date <= '2025-06-30');
             }
 
             renderMainChart(filtered);
